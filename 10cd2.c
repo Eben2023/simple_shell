@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 extern char **environ;
 
@@ -23,10 +24,13 @@ int main(void)
 
     char *cwd;
     char *home = getenv("HOME");
-    if (home == NULL) {
+    if (home == NULL)
+    {
         perror("getenv error");
         exit(EXIT_FAILURE);
     }
+
+    char *prev_cwd = NULL;
 
     while (1)
     {
@@ -69,20 +73,31 @@ int main(void)
             if (strcmp(args[0], "cd") == 0)
             {
                 char *dir = args[1];
-                if (dir == NULL || strcmp(dir, "~") == 0) {
+                if (dir == NULL || strcmp(dir, "~") == 0)
+                {
                     dir = home;
-                } else if (strcmp(dir, "-") == 0) {
-                    dir = getenv("OLDPWD");
-                    if (dir == NULL) {
-                        dir = home;
+                }
+                else if (strcmp(dir, "-") == 0)
+                {
+                    if (prev_cwd == NULL)
+                    {
+                        fprintf(stderr, "No previous working directory\n");
+                        continue;
                     }
-                    printf("%s\n", dir);
+                    dir = prev_cwd;
                 }
                 if (chdir(dir) == -1)
                 {
-                    perror("chdir error");
-                } else {
-                    setenv("OLDPWD", cwd, 1);
+                    if (errno == ENOENT) {
+                        fprintf(stderr, "%s: Directory not found\n", dir);
+                    } else {
+                        perror("chdir error");
+                    }
+                }
+                else
+                {
+                    if (prev_cwd != NULL) free(prev_cwd);
+                    prev_cwd = getcwd(NULL, 0);
                 }
             }
             else if (strcmp(args[0], "exit") == 0)
@@ -109,26 +124,25 @@ int main(void)
             {
                 if (args[1] == NULL || args[2] != NULL)
                 {
-                    fprintf(stderr, "Usage: unsetenv VARIABLE\n");
-                }
-                else if (unsetenv(args[1]) == -1)
-                {
-                    fprintf(stderr, "Failed to unset environment variable\n");
-                }
-            }
-            else
+                   fprintf(stderr, "Usage: unsetenv VARIABLE\n");
+}
+else if (unsetenv(args[1]) == -1)
+{
+fprintf(stderr, "Failed to unset environment variable\n");
+}
+}
+else
+{
+pid_t pid = fork();
+            if (pid == -1)
             {
-                pid_t pid = fork();
-
-                if (pid == -1)
-                {
-                    perror("fork error");
-                    exit(EXIT_FAILURE);
-                }
-                else if (pid == 0)
-                {
-                    // child process
-		    execvp(args[0], args);
+                perror("fork error");
+                exit(EXIT_FAILURE);
+            }
+            else if (pid == 0)
+            {
+                // child process
+                execvp(args[0], args);
                 perror("execvp error");
                 exit(EXIT_FAILURE);
             }
