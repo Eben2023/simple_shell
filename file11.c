@@ -2,7 +2,6 @@
 
 /**
  * history_data_func - Return path to history file
- *
  * @info: pointer to dat_t struct
  *
  * Return: path to history file or NULL on failure
@@ -15,13 +14,17 @@ char *history_data_func(dat_t *info)
     int dir_len = 0;
     int hfile_len = 0;
 
-    if (mdirec != NULL) 
+
+    if (mdirec != NULL)
     {
         dir_len = stringlength_func(mdirec);
         hfile_len = stringlength_func(HFILE_CONST);
         buffer = malloc(sizeof(char) * (dir_len + hfile_len + 2));
-        if (buffer != NULL) {
+        if (buffer != NULL)
+	{
             int i = 0;
+
+
             for (i = 0; i < dir_len; i++)
             {
                 buffer[i] = mdirec[i];
@@ -35,6 +38,7 @@ char *history_data_func(dat_t *info)
             buffer[i] = '\0';
         }
     }
+    
     return (buffer);
 }
 
