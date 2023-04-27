@@ -10,20 +10,19 @@
 
 char *mystring_cpy_funct(char *dest, char *src, int n)
 {
-    int i;
+int i;
 
-    for (i = 0; i < n && src[i] != '\0'; i++)
-    {
-        dest[i] = src[i];
-    }
-    for (; i < n; i++)
-    {
-        dest[i] = '\0';
-    }
-
-    return (dest);
+for (i = 0; i < n && src[i] != '\0'; i++)
+{
+dest[i] = src[i];
+}
+for (; i < n; i++)
+{
+dest[i] = '\0';
 }
 
+return (dest);
+}
 
 /**
  * my_string_cat_func - Concatenates two strings
@@ -42,14 +41,14 @@ char *s = dest;
 i = 0;
 while (dest[i] != '\0')
 {
-    i++;
+i++;
 }
 for (j = 0; j < n && src[j] != '\0'; j++)
 {
-    dest[i + j] = src[j];
+dest[i + j] = src[j];
 }
 dest[i + j] = '\0';
-return s;
+return (s);
 }
 
 /**
@@ -58,17 +57,21 @@ return s;
  * @s: the string to be searched
  * @c: the character to search for
  *
- * Return: a pointer to the first occurrence of the character in the string, 
+ * Return: a pointer to the first occurrence of the character in the string,
  * or NULL if the character is not found
  */
 char *my_str_chr_func(char *s, char c)
 {
-    while (*s != '\0' && *s != c)
-    {
-        s++;
-    }
-    if (*s == c)
-    {
-        return (s);
-    }
+while (*s != '\0' && *s != c)
+{
+s++;
+}
+if (*s == c)
+{
+return (s);
+}
+else
+{
+return (NULL);
+}
 }

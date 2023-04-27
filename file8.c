@@ -11,40 +11,40 @@
 
 ssize_t input_buf(dat_t *info, char **buf, size_t *len)
 {
-    ssize_t r = 0;
-    size_t len_p = 0;
+ssize_t r = 0;
+size_t len_p = 0;
 
-    if (*len == 0) 
-    {
-        free(*buf);
-        *buf = NULL;
-        signal(SIGINT, my_signal_handler_func);
+if (*len == 0)
+{
+free(*buf);
+*buf = NULL;
+signal(SIGINT, my_signal_handler_func);
 
 #if GTLINE_CONST
 r = getline(buf, &len_p, stdin);
 #else
-        r = _my_getline_func(info, buf, &len_p);
+r = _my_getline_func(info, buf, &len_p);
 #endif
-        if (r > 0)
-        {
-            if ((*buf)[r - 1] == '\n')
-            {
-                (*buf)[r - 1] = '\0';
-                r--;
-            }
+if (r > 0)
+{
+if ((*buf)[r - 1] == '\n')
+{
+(*buf)[r - 1] = '\0';
+r--;
+}
 
-            info->linecount_flag = 1;
+info->linecount_flag = 1;
 
-            my_comment_remov(*buf);
+my_comment_remov(*buf);
 
-            pop_histlist_func(info, *buf, info->histcount++);
-            {
-                *len = r;
-                info->cmd_buf = buf;
-            }
-        }
-    }
-    return (r);
+pop_histlist_func(info, *buf, info->histcount++);
+{
+*len = r;
+info->cmd_buf = buf;
+}
+}
+}
+return (r);
 }
 
 /**
@@ -56,54 +56,42 @@ r = getline(buf, &len_p, stdin);
 
 ssize_t my_read_input_func(dat_t *info)
 {
-    static char *buf;
-    static size_t j;
-    static size_t i;
-    static size_t len;
-
-    ssize_t r = 0;
-
-    char *p;
-    char **buf_p = &(info->arg);
-
-    my_putc_char(FL_BUFFER_CONST);
-    r = input_buf(info, &buf, &len);
-    if (r == -1)
-    { 
-        return (-1);
-    }
-
-    if (len)
-    {
-        j = i;
-        p = buf + i;
-
-        verify_chain_func_(info, buf, &j, i, len);
-
-        for (j = 0; j < len; j++)
-        {
-            if (check_chain_func_(info, buf, &j))
-            {
-                break;
-            }
-        }
-
-
-        i = j + 1;
-
-        if (i >= len)
-        {
-            i = len = 0;
-            info->cmd_buf_type = NOM_CM;
-        }
-
-        *buf_p = p;
-
-        return (stringlength_func(p));
-    }
-
-    *buf_p = buf;
-    return (r);
+static char *buf;
+static size_t j;
+static size_t i;
+static size_t len;
+ssize_t r = 0;
+char *p;
+char **buf_p = &(info->arg);
+my_putc_char(FL_BUFFER_CONST);
+r = input_buf(info, &buf, &len);
+if (r == -1)
+{
+return (-1);
+}
+if (len)
+{
+j = i;
+p = buf + i;
+verify_chain_func_(info, buf, &j, i, len);
+for (j = 0; j < len; j++)
+{
+if (check_chain_func_(info, buf, &j))
+{
+break;
+}
+}
+i = j + 1;
+if (i >= len)
+{
+i = len = 0;
+info->cmd_buf_type = NOM_CM;
+}
+*buf_p = p;
+return (stringlength_func(p));
+}
+*buf_p = buf;
+return (r);
 }
 
 /**
@@ -117,29 +105,29 @@ ssize_t my_read_input_func(dat_t *info)
 
 ssize_t read_buf(dat_t *info, char *buf, size_t *i)
 {
-    ssize_t p = 0;
-    ssize_t r = 0;
-    
-    if (*i)
-    {
-        return (0);
-    }
-    p = read(info->readfd, buf, RD_BUFFER_CONST);
-    r = p;
+ssize_t p = 0;
+ssize_t r = 0;
 
-    if (r >= 0)
-    {
-        *i = r;
-    }
+if (*i)
+{
+return (0);
+}
+p = read(info->readfd, buf, RD_BUFFER_CONST);
+r = p;
 
-    return (r);
+if (r >= 0)
+{
+*i = r;
+}
+
+return (r);
 }
 
 /**
- * _my_getline_func - This function retrieves the next line of input 
+ * _my_getline_func - This function retrieves the next line of input
  * from the standard input (STDIN)
  * @info: A structure containing relevant parameters.
- * @ptr: The address of a pointer to a buffer, which may be preallocated 
+ * @ptr: The address of a pointer to a buffer, which may be preallocated
  * or set to NULL.
  * @length: The size of the preallocated ptr buffer, if it is not NULL
  *
@@ -148,71 +136,44 @@ ssize_t read_buf(dat_t *info, char *buf, size_t *i)
 
 int _my_getline_func(dat_t *info, char **ptr, size_t *length)
 {
-    size_t k;
-    ssize_t s = 0;
-    ssize_t r = 0;
-
-    static char buf[RD_BUFFER_CONST];
-
-    static size_t len;
-    static size_t i;
-    
-    char *new_p = NULL;
-    char *c;
-    char *p = NULL;
-
-    p = *ptr;
-
-    int _and = (p && length);
-    int _equal = (i == len);
-
-    if (_and)
-    {
-        s = *length;
-    }
-
-    if (_equal)
-    {
-        i = len = 0;
-    }
-
-    r = read_buf(info, buf, &len);
-
-    if (r == -1 || (r == 0 && len == 0))
-    {
-        return (-1);
-    }
-
-    c = my_str_chr_func(buf + i, '\n');
-    k = c ? 1 + (unsigned int)(c - buf) : len;
-
-    new_p = my_realloc_func(p, s, s ? s + k : k + 1);
-    if (!new_p)
-    {
-        return (p ? free(p), -1 : -1);
-    }
-
-    if (s)
-    {
-        my_string_cat_func(new_p, buf + i, k - i);
-    }
-    else
-    {
-        mystring_cpy_funct(new_p, buf + i, k - i + 1);
-    }
-
-    s += k - i;
-    i = k;
-    p = new_p;
-
-    if (length)
-    {
-        *length = s;
-    }
-
-    *ptr = p;
-
-    return (s);
+ssize_t r; /*added*/
+size_t k, s = 0;
+static char buf[RD_BUFFER_CONST];
+static size_t len;
+static size_t i;
+char *new_p = NULL;
+char *c;
+char *p = NULL;
+p = *ptr;
+if (p && length)
+s = *length;
+if (i == len)
+i = len = 0;
+r = read_buf(info, buf, &len);
+if ((r == -1) || (r == 0 && len == 0))
+return (-1);
+c = my_str_chr_func(buf + i, '\n');
+k = c ? 1 + (unsigned int)(c - buf) : len;
+new_p = my_realloc_func(p, s, s ? s + k : k + 1);
+if (!new_p)
+{
+return (p ? free(p), -1 : -1);
+}
+if (s)
+{
+my_string_cat_func(new_p, buf + i, k - i);
+}
+else
+{
+mystring_cpy_funct(new_p, buf + i, k - i + 1);
+}
+s += k - i;
+i = k;
+p = new_p;
+if (length)
+*length = s;
+*ptr = p;
+return (s);
 }
 
 /**
@@ -225,7 +186,7 @@ int _my_getline_func(dat_t *info, char **ptr, size_t *length)
 
 void my_signal_handler_func(__attribute__((unused)) int sig_num)
 {
-    my_puts_func_("\n");
-    my_puts_func_("$ ");
-    my_putc_char(FL_BUFFER_CONST);
+my_puts_func_("\n");
+my_puts_func_("$ ");
+my_putc_char(FL_BUFFER_CONST);
 }

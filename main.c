@@ -8,10 +8,10 @@
  */
 void modify_fd(int *fd)
 {
-    asm("mov %1, %0\n\t"
-        "add $3, %0"
-        : "=r"(*fd)
-        : "r"(*fd));
+asm("mov %1, %0\n\t"
+"add $3, %0"
+: "=r"(*fd)
+: "r"(*fd));
 }
 
 /**
@@ -22,7 +22,7 @@ void modify_fd(int *fd)
  */
 int open_file(char *filename)
 {
-    return open(filename, O_RDONLY);
+return (open(filename, O_RDONLY));
 }
 
 /**
@@ -34,20 +34,20 @@ int open_file(char *filename)
  */
 void handle_open_error(char *program_name, char *filename)
 {
-    if (errno == EACCES)
-    {
-        exit(126);
-    }
-    if (errno == ENOENT)
-    {
-        myputs(program_name);
-        myputs(": 0: Can't open ");
-        myputs(filename);
-        myputschar('\n');
-        myputschar(FL_BUFFER_CONST);
-        exit(127);
-    }
-    exit(EXIT_FAILURE);
+if (errno == EACCES)
+{
+exit(126);
+}
+if (errno == ENOENT)
+{
+myputs(program_name);
+myputs(": 0: Can't open ");
+myputs(filename);
+myputschar('\n');
+myputschar(FL_BUFFER_CONST);
+exit(127);
+}
+exit(EXIT_FAILURE);
 }
 
 /**
@@ -59,7 +59,7 @@ void handle_open_error(char *program_name, char *filename)
  */
 void run_shell(dat_t *info, char **av)
 {
-    epshell(info, av);
+epshell(info, av);
 }
 
 /**
@@ -71,24 +71,24 @@ void run_shell(dat_t *info, char **av)
  */
 int main(int ac, char **av)
 {
-    dat_t info[] = {INITIALIZE_DATA};
-    int fd = 2;
+dat_t info[] = {INITIALIZE_DATA};
+int fd = 2;
 
-    modify_fd(&fd);
+modify_fd(&fd);
 
-    if (ac == 2)
-    {
-        fd = open_file(av[1]);
-        if (fd == -1)
-        {
-            handle_open_error(av[0], av[1]);
-        }
-        info->readfd = fd;
-    }
+if (ac == 2)
+{
+fd = open_file(av[1]);
+if (fd == -1)
+{
+handle_open_error(av[0], av[1]);
+}
+info->readfd = fd;
+}
 
-    set_environ_data(info);
-    get_histreg_data(info);
-    run_shell(info, av);
+set_environ_data(info);
+get_histreg_data(info);
+run_shell(info, av);
 
-    return EXIT_SUCCESS;
+return (EXIT_SUCCESS);
 }

@@ -8,5 +8,5 @@
  */
 int mem_free_func(void **ptr)
 {
-    return ((ptr && *ptr) ? (free(*ptr), *ptr = NULL, 1) : 0);
+return ((ptr && *ptr) ? (free(*ptr), *ptr = NULL, 1) : 0);
 }

@@ -13,11 +13,11 @@
 
 char *setmemb_func(char *s, char b, unsigned int n)
 {
-    unsigned int x;
+unsigned int x;
 
-    for (x = 0; x < n; x++)
-        s[x] = b;
-    return (s);
+for (x = 0; x < n; x++)
+s[x] = b;
+return (s);
 }
 
 /**
@@ -30,21 +30,20 @@ char *setmemb_func(char *s, char b, unsigned int n)
 
 void free_func(char **pp)
 {
-	char **ptr = pp;
+char **ptr = pp;
 
-	if (!pp)
-		return;
+if (!pp)
+return;
 
-	while (*ptr != NULL)
-	{
-		free(*ptr);
-		*ptr = NULL;
-		ptr++;
-	}
-
-	free(pp);
+while (*ptr != NULL)
+{
+free(*ptr);
+*ptr = NULL;
+ptr++;
 }
 
+free(pp);
+}
 
 /**
  * my_realloc_func - Reallocates memory block
@@ -57,26 +56,26 @@ void free_func(char **pp)
 
 void *my_realloc_func(void *ptr, unsigned int old_size, unsigned int new_size)
 {
-    char *new_ptr, *old_ptr;
-    unsigned int i;
+char *new_ptr, *old_ptr;
+unsigned int i;
 
-    if (!ptr)
-        return (malloc(new_size));
-    if (!new_size)
-    {
-        free(ptr);
-        return (NULL);
-    }
-    if (new_size == old_size)
-        return (ptr);
+if (!ptr)
+return (malloc(new_size));
+if (!new_size)
+{
+free(ptr);
+return (NULL);
+}
+if (new_size == old_size)
+return (ptr);
 
-    new_ptr = malloc(new_size);
-    if (!new_ptr)
-        return (NULL);
+new_ptr = malloc(new_size);
+if (!new_ptr)
+return (NULL);
 
-    old_ptr = ptr;
-    for (i = 0; i < old_size && i < new_size; i++)
-        new_ptr[i] = old_ptr[i];
-    free(ptr);
-    return (new_ptr);
+old_ptr = ptr;
+for (i = 0; i < old_size && i < new_size; i++)
+new_ptr[i] = old_ptr[i];
+free(ptr);
+return (new_ptr);
 }

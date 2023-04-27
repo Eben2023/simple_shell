@@ -9,10 +9,10 @@
 
 int interac_mode(dat_t *info)
 {
-    if (isatty(STDIN_FILENO) && info->readfd <= 2)
-        return (1);
-    else
-        return (0);
+if (isatty(STDIN_FILENO) && info->readfd <= 2)
+return (1);
+else
+return (0);
 }
 
 /**
@@ -24,10 +24,10 @@ int interac_mode(dat_t *info)
 
 int check_delim_(char c, char *delim)
 {
-    while (*delim)
-        if (*delim++ == c)
-            return (1);
-    return (0);
+while (*delim)
+if (*delim++ == c)
+return (1);
+return (0);
 }
 
 /**
@@ -39,14 +39,13 @@ int check_delim_(char c, char *delim)
 
 int check_alpha(int c)
 {
-    int is_alpha = 0;
+int is_alpha = 0;
 
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-        is_alpha = 1;
+if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+is_alpha = 1;
 
-    return (is_alpha);
+return (is_alpha);
 }
-
 
 /**
  * my_atoi_funct - converts a string to an integer.
@@ -57,23 +56,23 @@ int check_alpha(int c)
 
 int my_atoi_funct(char *s)
 {
-    int i = 0, sign = 1, output = 0;
+int i = 0, sign = 1, output = 0;
 
-    while (s[i] == ' ' || s[i] == '\t' || s[i] == '\n')
-        i++;
+while (s[i] == ' ' || s[i] == '\t' || s[i] == '\n')
+i++;
 
-    if (s[i] == '-')
-    {
-        sign = -1;
-        i++;
-    }
-    else if (s[i] == '+')
-        i++;
+if (s[i] == '-')
+{
+sign = -1;
+i++;
+}
+else if (s[i] == '+')
+i++;
 
-    while (s[i] >= '0' && s[i] <= '9')
-    {
-        output = output * 10 + (s[i] - '0');
-        i++;
-    }
-    return (output * sign);
+while (s[i] >= '0' && s[i] <= '9')
+{
+output = output * 10 + (s[i] - '0');
+i++;
+}
+return (output *sign);
 }

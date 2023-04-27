@@ -10,18 +10,18 @@
 
 int check_cm(dat_t *info, char *path)
 {
-    struct stat st;
+struct stat st;
 
-    (void)info;
+(void)info;
 
-    if (!path || stat(path, &st))
-    {
-        return (0);
-    }
+if (!path || stat(path, &st))
+{
+return (0);
+}
 
-    return ((st.st_mode & S_IFREG) == S_IFREG);
+return ((st.st_mode & S_IFREG) == S_IFREG);
 
-    return (0);
+return (0);
 }
 
 /**
@@ -35,22 +35,22 @@ int check_cm(dat_t *info, char *path)
 
 char *chardup_func(char *pathstr, int start, int stop)
 {
-    int x = 0;
-    int y = 0;
+int x = 0;
+int y = 0;
 
-    static char loc_buffer[1024];
+static char loc_buffer[1024];
 
-    for (y = 0, x = start; x < stop; x++)
-    {
-        if (pathstr[x] != ':')
-        {
-            loc_buffer[y++] = pathstr[x];
-        }
-    }
-    
-    loc_buffer[y] = 0;
+for (y = 0, x = start; x < stop; x++)
+{
+if (pathstr[x] != ':')
+{
+loc_buffer[y++] = pathstr[x];
+}
+}
 
-    return (loc_buffer);
+loc_buffer[y] = 0;
+
+return (loc_buffer);
 }
 
 /**
@@ -64,45 +64,42 @@ char *chardup_func(char *pathstr, int start, int stop)
 
 char *path_search(dat_t *info, char *pathstr, char *cmd)
 {
-    char *path;
+char *path;
+int cpos_ = 0;
+int k = 0;
+if (!pathstr)
+return (NULL);
+if ((stringlength_func(cmd) > 2) && begin_func(cmd, "./"))
+{
+if (check_cm(info, cmd))
+return (cmd);
+}
+while (1)
+{
+if (!pathstr[k] || pathstr[k] == ':')
+{
+path = chardup_func(pathstr, cpos_, k);
 
-    int cpos_ = 0;
-    int k = 0;
-
-    if (!pathstr)
-        return (NULL);
-    if ((stringlength_func(cmd) > 2) && begin_func(cmd, "./"))
-    {
-        if (check_cm(info, cmd))
-            return (cmd);
-    }
-    while (1)
-    {
-        if (!pathstr[k] || pathstr[k] == ':')
-        {
-            path = chardup_func(pathstr, cpos_, k);
-
-            if (!*path)
-            {
-                mystring_cat(path, cmd);
-            }
-            else
-            {
-                mystring_cat(path, "/");
-                mystring_cat(path, cmd);
-            }
-            if (check_cm(info, path))
-                {
-                    return (path);
-                }
-            if (!pathstr[k])
-                {
-                    break;
-                }
-
-            cpos_ = k;
-        }
-        k += 1;
-    }
-    return (NULL);
+if (!*path)
+{
+mystring_cat(path, cmd);
+}
+else
+{
+mystring_cat(path, "/");
+mystring_cat(path, cmd);
+}
+if (check_cm(info, path))
+{
+return (path);
+}
+if (!pathstr[k])
+{
+break;
+}
+cpos_ = k;
+}
+k += 1;
+}
+return (NULL);
 }

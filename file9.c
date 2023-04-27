@@ -1,24 +1,26 @@
 #include "main.h"
 
 /**
- * my_retr_environ_func - This function retrieves the environment variables as an array of strings.
+ * my_retr_environ_func - This function retrieves the environment
+ * variables as an array of strings.
  *
  * @info: A structure containing relevant parameters.
  *
- * Return: This function returns an array of strings that represent the current environment variables.
+ * Return: This function returns an array of strings that represent
+ * the current environment variables.
  */
 
 char **my_retr_environ_func(dat_t *info)
 {
-    int _is_env_or_change = (!info->environ || info->env_changed);
+int _is_env_or_change = (!info->environ || info->env_changed);
 
-    if (_is_env_or_change)
-    {
-        info->environ = conv_list_to_str_func(info->env);
-        info->env_changed = 0;
-    }
+if (_is_env_or_change)
+{
+info->environ = conv_list_to_str_func(info->env);
+info->env_changed = 0;
+}
 
-    return (info->environ);
+return (info->environ);
 }
 
 /**
@@ -31,30 +33,29 @@ char **my_retr_environ_func(dat_t *info)
 
 int my_unset_environ_func(dat_t *info, char *var)
 {
-    char *p;
-    size_t i = 0; 
-    struct_t *node = info->env;
+char *p;
+size_t i = 0;
+struct_t *node = info->env;
 
-    if (node == NULL || var == NULL)
-    {
-        return 0;
-    }
+if (node == NULL || var == NULL)
+{
+return (0);
+}
 
+for (i = 0, node = info->env; node; i++, node = node->next)
+{
 
-    for (i = 0, node = info->env; node; i++, node = node->next)
-    {
+p = begin_func(node->var_str, var);
 
-    p = begin_func(node->var_str, var);
+if (p && *p == '=')
+{
+info->env_changed = node_del_index_func(&(info->env), i);
+i = -1;
+node = info->env;
+}
+}
 
-    if (p && *p == '=')
-        {
-            info->env_changed = node_del_index_func(&(info->env), i);
-            i = -1;
-            node = info->env;
-        }
-    }
-
-    return (info->env_changed);
+return (info->env_changed);
 }
 
 /**
@@ -67,41 +68,41 @@ int my_unset_environ_func(dat_t *info, char *var)
 
 int my_set_environ_func_(dat_t *info, char *var, char *value)
 {
-    char *p, *buf = NULL;
-    struct_t *node;
-    int x = (!var || !value);
-    if (x)
-    {
-        return (0);
-    }
+char *p, *buf = NULL;
+struct_t *node;
+int x = (!var || !value);
+if (x)
+{
+return (0);
+}
 
-    buf = malloc((stringlength_func(var)) + (stringlength_func(value) + 2));
-    
-    if (buf == NULL)
-    {
-        return (1);
-    }
-    
-    mystring_cpy(buf, var);
-    mystring_cat(buf, "=");
-    mystring_cat(buf, value);
-    node = info->env;
+buf = malloc((stringlength_func(var)) + (stringlength_func(value) + 2));
 
-    while (node)
-    {
-        p = begin_func(node->var_str, var);
-        if (p && *p == '=')
-        {
-            free(node->var_str);
-            node->var_str = buf;
-            info->env_changed = 1;
-            return (0);
-        }
-        node = node->next;
-    }
-    
-    node_add_end_func(&(info->env), buf, 0);
-    free(buf);
-    info->env_changed = 1;
-    return (0);
+if (buf == NULL)
+{
+return (1);
+}
+
+mystring_cpy(buf, var);
+mystring_cat(buf, "=");
+mystring_cat(buf, value);
+node = info->env;
+
+while (node)
+{
+p = begin_func(node->var_str, var);
+if (p && *p == '=')
+{
+free(node->var_str);
+node->var_str = buf;
+info->env_changed = 1;
+return (0);
+}
+node = node->next;
+}
+
+node_add_end_func(&(info->env), buf, 0);
+free(buf);
+info->env_changed = 1;
+return (0);
 }
